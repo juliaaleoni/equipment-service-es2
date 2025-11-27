@@ -5,6 +5,7 @@ import { Totem } from './totem.entity';
 import { CreateTotemDto } from './dto/create-totem.dto';
 import { UpdateTotemDto } from './dto/update-totem.dto';
 import { TotemService } from './totem.service';
+import { LockService } from '../lock/lock.service';
 
 describe('TotemService', () => {
   let service: TotemService;
@@ -22,6 +23,10 @@ describe('TotemService', () => {
     remove: jest.fn(),
   };
 
+  const mockLockService = {
+    findByTotemId: jest.fn().mockResolvedValue([]), // Default: no locks
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,6 +34,10 @@ describe('TotemService', () => {
         {
           provide: getRepositoryToken(Totem),
           useValue: mockRepo,
+        },
+        {
+          provide: LockService,
+          useValue: mockLockService,
         },
       ],
     }).compile();

@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   HttpCode,
+  BadRequestException,
 } from '@nestjs/common';
 import { LockService } from './lock.service';
 import { LockNetworkService } from './lock-network.service';
@@ -56,6 +57,29 @@ export class LockController {
   @HttpCode(200)
   unlockBicycle(@Param('id') id: string) {
     return this.service.unlockBicycle(+id);
+  }
+
+  @Get(':id/bicicleta')
+  getBicycle(@Param('id') id: string) {
+    return this.service.getBicycle(+id);
+  }
+
+  @Post(':id/status/:action')
+  @HttpCode(200)
+  updateStatus(@Param('id') id: string, @Param('action') action: string) {
+    const actionMap: Record<string, () => Promise<any>> = {
+      TRANCAR: () => this.service.lockBicycle(+id, undefined),
+      DESTRANCAR: () => this.service.unlockBicycle(+id),
+    };
+
+    // Validate action is valid
+    if (!actionMap[action]) {
+      throw new BadRequestException(
+        `Invalid action: ${action}. Valid actions are: ${Object.keys(actionMap).join(', ')}`,
+      );
+    }
+
+    return actionMap[action]();
   }
 
   @Post('integrarNaRede')

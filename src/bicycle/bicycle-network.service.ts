@@ -33,9 +33,16 @@ export class BicycleNetworkService {
       throw new BadRequestException('Lock must be FREE');
     } 
 
-    await this.bicycleService.updateStatus(bicycleId, BicycleStatus.AVAILABLE); 
+    await this.bicycleService.updateStatus(bicycleId, BicycleStatus.AVAILABLE);
 
-    await this.lockService.lockBicycle(lockId, bicycleId); // Email notification not implemented in this delivery
+    await this.lockService.lockBicycle(lockId, bicycleId);
+
+    // Mock: Email notification
+    console.log(`[EMAIL] To: admin@bikeshare.com`);
+    console.log(`[EMAIL] Subject: Bicicleta integrada na rede`);
+    console.log(
+      `[EMAIL] Message: Bicicleta ${bicycleId} foi integrada à tranca ${lockId} pelo funcionário ${_employeeId}`,
+    );
   }
 
   async removeBicycle(
@@ -70,6 +77,13 @@ export class BicycleNetworkService {
 
     await this.bicycleService.updateStatus(bicycleId, newStatus);
 
-    await this.lockService.unlockBicycle(lockId); // Email notification not implemented in this delivery
+    await this.lockService.unlockBicycle(lockId);
+
+    // Mock: Email notification
+    console.log(`[EMAIL] To: admin@bikeshare.com`);
+    console.log(`[EMAIL] Subject: Bicicleta removida da rede`);
+    console.log(
+      `[EMAIL] Message: Bicicleta ${bicycleId} foi removida da tranca ${lockId} com ação ${action} pelo funcionário ${_employeeId}`,
+    );
   }
 }

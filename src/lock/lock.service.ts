@@ -2,18 +2,24 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Lock, LockStatus } from './lock.entity';
 import { CreateLockDto } from './dto/create-lock.dto';
 import { UpdateLockDto } from './dto/update-lock.dto';
+import { BicycleService } from '../bicycle/bicycle.service';
+import { Bicycle } from '../bicycle/bicycle.entity';
 
 @Injectable()
 export class LockService {
   constructor(
     @InjectRepository(Lock)
     private readonly repo: Repository<Lock>,
+    @Inject(forwardRef(() => BicycleService))
+    private readonly bicycleService: BicycleService,
   ) {}
 
   async create(dto: CreateLockDto): Promise<Lock> {
@@ -77,12 +83,12 @@ export class LockService {
     return this.repo.save(lock);
   }
 
-  async getBicycle(id: number): Promise<number> {
+  async getBicycle(id: number): Promise<Bicycle> {
     const lock = await this.findOne(id);
     if (!lock.bicycleId) {
       throw new NotFoundException('No bicycle in this lock');
     }
-    return lock.bicycleId;
+    return this.bicycleService.findOne(lock.bicycleId);
   }
 
   private async generateNumber(): Promise<number> {

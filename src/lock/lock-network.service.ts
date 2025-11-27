@@ -30,7 +30,12 @@ export class LockNetworkService {
 
     await this.lockService.updateTotemAssociation(lockId, totemId);
 
-    // Email notification not implemented in this delivery
+    // Mock: Email notification
+    console.log(`[EMAIL] To: admin@bikeshare.com`);
+    console.log(`[EMAIL] Subject: Tranca integrada na rede`);
+    console.log(
+      `[EMAIL] Message: Tranca ${lockId} foi integrada ao totem ${totemId} pelo funcionário ${_employeeId}`,
+    );
   }
 
   async removeLock(
@@ -59,6 +64,11 @@ export class LockNetworkService {
 
     await this.lockService.updateTotemAssociation(lockId, null);
 
-    // Email notification not implemented in this delivery
+    // Mock: Email notification
+    console.log(`[EMAIL] To: admin@bikeshare.com`);
+    console.log(`[EMAIL] Subject: Tranca removida da rede`);
+    console.log(
+      `[EMAIL] Message: Tranca ${lockId} foi removida com ação ${action} pelo funcionário ${_employeeId}`,
+    );
   }
 }

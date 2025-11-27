@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   HttpCode,
+  BadRequestException,
 } from '@nestjs/common';
 import { BicycleService } from './bicycle.service';
 import { BicycleNetworkService } from './bicycle-network.service';
@@ -57,6 +58,14 @@ export class BicycleController {
       REPARO_SOLICITADO: BicycleStatus.REPAIR_REQUESTED,
       EM_REPARO: BicycleStatus.IN_REPAIR,
     };
+
+    // Validate action is valid
+    if (!statusMap[action]) {
+      throw new BadRequestException(
+        `Invalid action: ${action}. Valid actions are: ${Object.keys(statusMap).join(', ')}`,
+      );
+    }
+
     return this.service.updateStatus(+id, statusMap[action]);
   }
 

@@ -1,98 +1,427 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Equipment Service - SCB
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Serviço de gerenciamento de equipamentos do Sistema de Compartilhamento de Bicicletas (SCB).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Descrição
 
-## Description
+O Equipment Service é o microserviço principal responsável por gerenciar todos os equipamentos físicos do SCB, incluindo:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Bicicletas**: Gerenciamento completo do ciclo de vida das bicicletas (cadastro, status, manutenção, aposentadoria)
+- **Trancas**: Controle de trancas inteligentes (trancar/destrancar, associação com bicicletas)
+- **Totems**: Gestão de totems (pontos de aluguel) e suas trancas
+- **Integração de Rede**: Operações de incluir/retirar equipamentos da rede operacional
 
-## Project setup
+## 🚀 Tecnologias
 
-```bash
-$ pnpm install
-```
+- **Node.js** 18+
+- **NestJS** 11 - Framework progressivo para Node.js
+- **TypeScript** 5.7 - Superset tipado de JavaScript
+- **PostgreSQL** - Banco de dados relacional
+- **TypeORM** - ORM para TypeScript/JavaScript
+- **Jest** - Framework de testes
+- **class-validator** - Validação de DTOs
+- **class-transformer** - Transformação de objetos
 
-## Compile and run the project
+## 📦 Pré-requisitos
+
+- Node.js 18 ou superior
+- PostgreSQL 14 ou superior
+- pnpm (gerenciador de pacotes)
+
+## 🔧 Instalação
 
 ```bash
-# development
-$ pnpm run start
+# Clone o repositório
+git clone <url-do-repositorio>
 
-# watch mode
-$ pnpm run start:dev
+# Entre no diretório
+cd equipment-service
 
-# production mode
-$ pnpm run start:prod
+# Instale as dependências
+pnpm install
 ```
 
-## Run tests
+## ⚙️ Configuração
+
+1. **Crie o arquivo `.env`** na raiz do projeto:
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+2. **Configure as variáveis de ambiente**:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```env
+# Aplicação
+NODE_ENV=development
+PORT=3000
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+# Banco de Dados
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/equipment_service
+
+# External Service (opcional para desenvolvimento)
+EXTERNAL_SERVICE_URL=http://localhost:3001
+```
+
+## 🏃 Executando o Projeto
+
+### Desenvolvimento
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# Modo desenvolvimento com hot-reload
+pnpm start:dev
+
+# Servidor estará disponível em http://localhost:3000
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Produção
 
-## Resources
+```bash
+# Build do projeto
+pnpm build
 
-Check out a few resources that may come in handy when working with NestJS:
+# Executar em produção
+pnpm start:prod
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 🧪 Testes
 
-## Support
+```bash
+# Testes unitários
+pnpm test
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Testes com coverage
+pnpm test:cov
 
-## Stay in touch
+# Testes em modo watch
+pnpm test:watch
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Testes E2E
+pnpm test:e2e
 
-## License
+# Linter
+pnpm lint
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📚 Documentação da API
+
+### Bicicletas
+
+#### `POST /bicicleta`
+Cria uma nova bicicleta.
+
+**Request:**
+```json
+{
+  "marca": "Caloi",
+  "modelo": "Elite Carbon",
+  "ano": "2024",
+  "numero": 123
+}
+```
+
+**Response:** `201 Created`
+
+#### `GET /bicicleta`
+Lista todas as bicicletas.
+
+#### `GET /bicicleta/:id`
+Retorna uma bicicleta específica.
+
+#### `PUT /bicicleta/:id`
+Atualiza os dados de uma bicicleta.
+
+#### `DELETE /bicicleta/:id`
+Remove uma bicicleta do sistema.
+
+**Response:** `200 OK`
+
+#### `POST /bicicleta/:id/status/:action`
+Atualiza o status de uma bicicleta.
+
+**Ações disponíveis:**
+- `DISPONIVEL` - Marca como disponível
+- `EM_USO` - Marca como em uso
+- `NOVA` - Marca como nova
+- `APOSENTADA` - Aposenta a bicicleta
+- `REPARO_SOLICITADO` - Solicita reparo
+- `EM_REPARO` - Marca como em reparo
+
+**Exemplo:**
+```
+POST /bicicleta/1/status/DISPONIVEL
+```
+
+#### `POST /bicicleta/integrarNaRede`
+Integra uma bicicleta na rede operacional (associa a uma tranca).
+
+**Request:**
+```json
+{
+  "idTranca": 1,
+  "idBicicleta": 5,
+  "idFuncionario": 10
+}
+```
+
+**Response:** `200 OK`
+
+#### `POST /bicicleta/retirarDaRede`
+Remove uma bicicleta da rede para manutenção/reparo.
+
+**Request:**
+```json
+{
+  "idTranca": 1,
+  "idBicicleta": 5,
+  "idFuncionario": 10,
+  "statusAcaoReparador": "EM_REPARO"
+}
+```
+
+**Response:** `200 OK`
+
+### Trancas
+
+#### `POST /tranca`
+Cria uma nova tranca.
+
+**Request:**
+```json
+{
+  "numero": 42,
+  "localizacao": "Parque Ibirapuera - Portão 3",
+  "modelo": "Smart Lock X1"
+}
+```
+
+#### `GET /tranca`
+Lista todas as trancas.
+
+#### `GET /tranca/:id`
+Retorna uma tranca específica.
+
+#### `PUT /tranca/:id`
+Atualiza os dados de uma tranca.
+
+#### `DELETE /tranca/:id`
+Remove uma tranca do sistema.
+
+**Response:** `200 OK`
+
+#### `POST /tranca/:id/trancar`
+Tranca uma bicicleta na tranca especificada.
+
+**Request:**
+```json
+{
+  "idBicicleta": 5
+}
+```
+
+**Response:** `200 OK`
+
+#### `POST /tranca/:id/destrancar`
+Destranca a bicicleta da tranca especificada.
+
+**Response:** `200 OK`
+
+#### `POST /tranca/integrarNaRede`
+Integra uma tranca em um totem.
+
+**Request:**
+```json
+{
+  "idTotem": 2,
+  "idTranca": 8,
+  "idFuncionario": 10
+}
+```
+
+**Response:** `200 OK`
+
+#### `POST /tranca/retirarDaRede`
+Remove uma tranca de um totem para manutenção.
+
+**Request:**
+```json
+{
+  "idTotem": 2,
+  "idTranca": 8,
+  "idFuncionario": 10,
+  "statusAcaoReparador": "EM_REPARO"
+}
+```
+
+**Response:** `200 OK`
+
+### Totems
+
+#### `POST /totem`
+Cria um novo totem.
+
+**Request:**
+```json
+{
+  "localizacao": "Av. Paulista, 1578 - São Paulo, SP",
+  "descricao": "Totem principal - Estação MASP"
+}
+```
+
+#### `GET /totem`
+Lista todos os totems.
+
+#### `GET /totem/:id`
+Retorna um totem específico.
+
+#### `PUT /totem/:id`
+Atualiza os dados de um totem.
+
+#### `DELETE /totem/:id`
+Remove um totem do sistema.
+
+**Response:** `200 OK`
+
+#### `GET /totem/:id/trancas`
+Lista todas as trancas associadas a um totem.
+
+**Response:** `200 OK`
+```json
+[
+  {
+    "id": 1,
+    "numero": 42,
+    "localizacao": "Totem Paulista",
+    "status": "LIVRE",
+    "bicycleId": null
+  }
+]
+```
+
+#### `GET /totem/:id/bicicletas`
+Lista todas as bicicletas disponíveis em um totem (através das trancas).
+
+**Response:** `200 OK`
+```json
+[
+  {
+    "id": 5,
+    "marca": "Caloi",
+    "modelo": "Elite",
+    "status": "DISPONIVEL"
+  }
+]
+```
+
+## 📁 Estrutura do Projeto
+
+```
+equipment-service/
+├── src/
+│   ├── bicycle/
+│   │   ├── dto/
+│   │   ├── bicycle.controller.ts
+│   │   ├── bicycle.entity.ts
+│   │   ├── bicycle.module.ts
+│   │   ├── bicycle.service.ts
+│   │   └── bicycle-network.service.ts
+│   ├── lock/
+│   │   ├── dto/
+│   │   ├── lock.controller.ts
+│   │   ├── lock.entity.ts
+│   │   ├── lock.module.ts
+│   │   ├── lock.service.ts
+│   │   └── lock-network.service.ts
+│   ├── totem/
+│   │   ├── dto/
+│   │   ├── totem.controller.ts
+│   │   ├── totem.entity.ts
+│   │   ├── totem.module.ts
+│   │   └── totem.service.ts
+│   ├── app.module.ts
+│   └── main.ts
+├── test/
+├── postman/
+│   ├── equipment-service.postman_collection.json
+│   └── README.md
+├── .env.example
+├── package.json
+└── README.md
+```
+
+## 🌐 Deploy (Render)
+
+### Variáveis de Ambiente no Render
+
+```
+NODE_ENV=production
+EXTERNAL_SERVICE_URL=https://your-external-service.onrender.com
+```
+
+> **Nota:** `DATABASE_URL` é fornecida automaticamente pelo Render ao conectar um PostgreSQL.
+
+## 📮 Testando com Postman
+
+Coleções Postman completas estão disponíveis em `postman/`:
+
+1. Importe `equipment-service.postman_collection.json`
+2. Configure o ambiente (`local` ou `production`)
+3. Execute os requests!
+
+Veja [postman/README.md](postman/README.md) para mais detalhes.
+
+## 🔄 Integração com External Service
+
+O Equipment Service se integra com o External Service para:
+
+- **Envio de Emails**: Notificações sobre status de equipamentos
+- **Processamento de Pagamentos**: Cobranças de aluguel através do External Service
+
+### Exemplos de Integração
+
+**Incluir Bicicleta na Rede (UC08):**
+1. Equipment Service valida bicicleta e tranca
+2. Atualiza status da bicicleta para DISPONIVEL
+3. Chama External Service para enviar email ao funcionário
+
+**Retirar Bicicleta para Reparo (UC09):**
+1. Equipment Service valida bicicleta e tranca
+2. Atualiza status da bicicleta para EM_REPARO
+3. Chama External Service para enviar email ao funcionário
+
+## 🔍 Status dos Equipamentos
+
+### Status de Bicicletas
+- **AVAILABLE** (DISPONIVEL): Bicicleta disponível para aluguel
+- **IN_USE** (EM_USO): Bicicleta em uso
+- **NEW** (NOVA): Bicicleta recém-adicionada ao sistema
+- **RETIRED** (APOSENTADA): Bicicleta aposentada
+- **REPAIR_REQUESTED** (REPARO_SOLICITADO): Reparo solicitado
+- **IN_REPAIR** (EM_REPARO): Bicicleta em manutenção
+
+### Status de Trancas
+- **LIVRE**: Tranca disponível (sem bicicleta)
+- **OCUPADA**: Tranca com bicicleta
+- **NOVA**: Tranca recém-instalada
+- **APOSENTADA**: Tranca desativada
+- **REPARO_SOLICITADO**: Reparo solicitado
+- **EM_REPARO**: Tranca em manutenção
+
+## 🐛 Troubleshooting
+
+### Erro de Conexão com o Banco
+**Solução:** Verifique se PostgreSQL está rodando e as credenciais estão corretas.
+
+### Erro 404 ao Chamar External Service
+**Causa:** `EXTERNAL_SERVICE_URL` não configurada ou serviço externo offline
+**Solução:** Configure a variável de ambiente e verifique se o External Service está rodando
+
+### Conflito ao Integrar Bicicleta
+**Causa:** Tranca já ocupada ou bicicleta já em uso
+**Solução:** Verifique o status da tranca e bicicleta antes de integrar
+
+---
+
+**Versão:** 0.0.1
+**Framework:** NestJS 11
+**TypeScript:** 5.7

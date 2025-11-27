@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { LockService } from './lock.service';
 import { Lock, LockStatus } from './lock.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { BicycleService } from '../bicycle/bicycle.service';
 
 describe('LockService', () => {
   let service: LockService;
@@ -16,6 +17,10 @@ describe('LockService', () => {
     remove: jest.fn(),
   };
 
+  const mockBicycleService = {
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -23,6 +28,10 @@ describe('LockService', () => {
         {
           provide: getRepositoryToken(Lock),
           useValue: mockRepo,
+        },
+        {
+          provide: BicycleService,
+          useValue: mockBicycleService,
         },
       ],
     }).compile();
@@ -208,13 +217,23 @@ describe('LockService', () => {
   });
 
   describe('getBicycle', () => {
-    it('should return bicycle id', async () => {
+    it('should return bicycle object', async () => {
       const lock = { id: 1, bicycleId: 5 };
+      const mockBicycle = {
+        id: 5,
+        number: 100,
+        brand: 'Caloi',
+        model: 'Elite',
+        year: '2023',
+        status: 'DISPONIVEL',
+      };
       mockRepo.findOneBy.mockResolvedValue(lock);
+      mockBicycleService.findOne.mockResolvedValue(mockBicycle);
 
       const result = await service.getBicycle(1);
 
-      expect(result).toBe(5);
+      expect(result).toEqual(mockBicycle);
+      expect(mockBicycleService.findOne).toHaveBeenCalledWith(5);
     });
 
     it('should throw NotFoundException if no bicycle', async () => {

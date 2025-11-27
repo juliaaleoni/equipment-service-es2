@@ -6,6 +6,9 @@ import { AppService } from './app.service';
 import { BicycleModule } from './bicycle/bicycle.module';
 import { LockModule } from './lock/lock.module';
 import { TotemModule } from './totem/totem.module';
+import { Bicycle } from './bicycle/bicycle.entity';
+import { Lock } from './lock/lock.entity';
+import { Totem } from './totem/totem.entity';
 
 @Module({
   imports: [
@@ -19,6 +22,7 @@ import { TotemModule } from './totem/totem.module';
       synchronize: process.env.NODE_ENV !== 'production',
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     }),
+    TypeOrmModule.forFeature([Bicycle, Lock, Totem]),
     BicycleModule,
     LockModule,
     TotemModule,
