@@ -11,7 +11,7 @@ export class AppController {
   }
 
   @Get('restaurarDados')
-  async restaurarDados(): Promise<{ message: string }> {
+  async restaurarDados() {
     return this.appService.restaurarDados();
   }
 }
