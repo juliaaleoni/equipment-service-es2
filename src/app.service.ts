@@ -21,27 +21,30 @@ export class AppService {
   }
 
   async restaurarDados(): Promise<{ message: string }> {
-    // Clear all data from tables in correct order (respecting foreign keys)
-    await this.lockRepo.delete({});
-    await this.bicycleRepo.delete({});
-    await this.totemRepo.delete({});
+    await this.lockRepo.createQueryBuilder().delete().execute();
+    await this.bicycleRepo.createQueryBuilder().delete().execute();
+    await this.totemRepo.createQueryBuilder().delete().execute();
 
-    // Reset sequences to start from 1
-    await this.totemRepo.query(`ALTER SEQUENCE totems_id_seq RESTART WITH 1`);
-    await this.bicycleRepo.query(
-      `ALTER SEQUENCE bicycles_id_seq RESTART WITH 1`,
-    );
-    await this.lockRepo.query(`ALTER SEQUENCE locks_id_seq RESTART WITH 1`);
+    try {
+      await this.totemRepo.query(`ALTER SEQUENCE totems_id_seq RESTART WITH 1`);
+      await this.bicycleRepo.query(
+        `ALTER SEQUENCE bicycles_id_seq RESTART WITH 1`,
+      );
+      await this.lockRepo.query(`ALTER SEQUENCE locks_id_seq RESTART WITH 1`);
+    } catch (e: unknown) {
+      console.log(
+        'Aviso: Não foi possível resetar sequencias (pode ser normal em alguns bancos):',
+        e instanceof Error ? e.message : String(e),
+      );
+    }
 
-    // Insert initial test data
-
-    // 1. Create Totem
+    // Create Totem
     const totem = await this.totemRepo.save({
       location: 'Rio de Janeiro',
       description: 'Totem Principal',
     });
 
-    // 2. Create Bicycles
+    // Create Bicycles
     const bicycle1 = await this.bicycleRepo.save({
       marca: 'Caloi',
       modelo: 'Caloi',
@@ -82,7 +85,7 @@ export class AppService {
       status: BicycleStatus.AVAILABLE,
     });
 
-    // 3. Create Locks
+    // Create Locks
     await this.lockRepo.save({
       number: 1001,
       location: 'Rio de Janeiro',
