@@ -44,6 +44,7 @@ describe('LockService', () => {
   describe('create', () => {
     it('should create lock with status NEW and generated number', async () => {
       const dto = {
+        number: 1,
         location: '-22.9068,-43.1729',
         manufactureYear: '2023',
         model: 'Model X',

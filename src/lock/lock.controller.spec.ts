@@ -44,6 +44,7 @@ describe('LockController', () => {
 
   it('should create lock', async () => {
     const dto = {
+      number: 1,
       location: '-22.9068,-43.1729',
       manufactureYear: '2023',
       model: 'Model X',

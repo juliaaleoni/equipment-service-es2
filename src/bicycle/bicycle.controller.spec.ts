@@ -49,11 +49,11 @@ describe('BicycleController', () => {
 
   it('should create bicycle', async () => {
     const dto: CreateBicycleDto = {
-      brand: 'Caloi',
-      model: 'Elite',
-      year: '2023',
+      marca: 'Caloi',
+      modelo: 'Elite',
+      ano: '2023',
     };
-    const expected = { id: 1, ...dto, number: 1, status: BicycleStatus.NEW };
+    const expected = { id: 1, ...dto, numero: 1, status: BicycleStatus.NEW };
 
     mockService.create.mockResolvedValue(expected);
     const result = await controller.create(dto);
@@ -66,10 +66,10 @@ describe('BicycleController', () => {
     const expected = [
       {
         id: 1,
-        brand: 'Caloi',
-        model: 'Elite',
-        year: '2023',
-        number: 1,
+        marca: 'Caloi',
+        modelo: 'Elite',
+        ano: '2023',
+        numero: 1,
         status: BicycleStatus.NEW,
       },
     ];
@@ -83,10 +83,10 @@ describe('BicycleController', () => {
   it('should find one bicycle', async () => {
     const expected = {
       id: 1,
-      brand: 'Caloi',
-      model: 'Elite',
-      year: '2023',
-      number: 1,
+      marca: 'Caloi',
+      modelo: 'Elite',
+      ano: '2023',
+      numero: 1,
       status: BicycleStatus.NEW,
     };
     mockService.findOne.mockResolvedValue(expected);
@@ -97,13 +97,13 @@ describe('BicycleController', () => {
   });
 
   it('should update bicycle', async () => {
-    const dto: UpdateBicycleDto = { brand: 'Specialized' };
+    const dto: UpdateBicycleDto = { marca: 'Specialized' };
     const expected = {
       id: 1,
-      brand: 'Specialized',
-      model: 'Elite',
-      year: '2023',
-      number: 1,
+      marca: 'Specialized',
+      modelo: 'Elite',
+      ano: '2023',
+      numero: 1,
       status: BicycleStatus.NEW,
     };
     mockService.update.mockResolvedValue(expected);

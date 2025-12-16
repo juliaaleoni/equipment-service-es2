@@ -5,6 +5,7 @@ import { LockService } from '../lock/lock.service';
 import { BicycleStatus } from './bicycle.entity';
 import { LockStatus } from '../lock/lock.entity';
 import { BadRequestException } from '@nestjs/common';
+import { ExternalClient } from '../clients/external.client';
 
 describe('BicycleNetworkService', () => {
   let service: BicycleNetworkService;
@@ -20,6 +21,10 @@ describe('BicycleNetworkService', () => {
     unlockBicycle: jest.fn(),
   };
 
+  const mockExternalClient = {
+    sendEmail: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -31,6 +36,10 @@ describe('BicycleNetworkService', () => {
         {
           provide: LockService,
           useValue: mockLockService,
+        },
+        {
+          provide: ExternalClient,
+          useValue: mockExternalClient,
         },
       ],
     }).compile();

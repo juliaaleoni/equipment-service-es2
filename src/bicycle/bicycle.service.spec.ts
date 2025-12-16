@@ -34,25 +34,25 @@ describe('BicycleService', () => {
 
   describe('create', () => {
     it('should create bicycle with status NEW and generated number', async () => {
-      const dto = { brand: 'Caloi', model: 'Elite', year: '2023' };
+      const dto = { marca: 'Caloi', modelo: 'Elite', ano: '2023' };
 
       mockRepo.findOne.mockResolvedValue(null);
       mockRepo.create.mockReturnValue({
         ...dto,
-        number: 1,
+        numero: 1,
         status: BicycleStatus.NEW,
       });
       mockRepo.save.mockResolvedValue({
         id: 1,
         ...dto,
-        number: 1,
+        numero: 1,
         status: BicycleStatus.NEW,
       });
 
       const result = await service.create(dto);
 
       expect(result.status).toBe(BicycleStatus.NEW);
-      expect(result.number).toBe(1);
+      expect(result.numero).toBe(1);
     });
   });
 
@@ -61,10 +61,10 @@ describe('BicycleService', () => {
       const bicycles = [
         {
           id: 1,
-          brand: 'Caloi',
-          model: 'Elite',
-          year: '2023',
-          number: 1,
+          marca: 'Caloi',
+          modelo: 'Elite',
+          ano: '2023',
+          numero: 1,
           status: BicycleStatus.NEW,
         },
       ];
@@ -80,10 +80,10 @@ describe('BicycleService', () => {
     it('should return bicycle if found', async () => {
       const bicycle = {
         id: 1,
-        brand: 'Caloi',
-        model: 'Elite',
-        year: '2023',
-        number: 1,
+        marca: 'Caloi',
+        modelo: 'Elite',
+        ano: '2023',
+        numero: 1,
         status: BicycleStatus.NEW,
       };
       mockRepo.findOneBy.mockResolvedValue(bicycle);
@@ -104,26 +104,26 @@ describe('BicycleService', () => {
     it('should update bicycle', async () => {
       const bicycle = {
         id: 1,
-        brand: 'Caloi',
-        model: 'Elite',
-        year: '2023',
-        number: 1,
+        marca: 'Caloi',
+        modelo: 'Elite',
+        ano: '2023',
+        numero: 1,
         status: BicycleStatus.NEW,
       };
-      const dto = { brand: 'Specialized' };
+      const dto = { marca: 'Specialized' };
 
       mockRepo.findOneBy.mockResolvedValue(bicycle);
       mockRepo.save.mockResolvedValue({ ...bicycle, ...dto });
 
       const result = await service.update(1, dto);
 
-      expect(result.brand).toBe('Specialized');
+      expect(result.marca).toBe('Specialized');
     });
 
     it('should throw NotFoundException if bicycle not found', async () => {
       mockRepo.findOneBy.mockResolvedValue(null);
 
-      await expect(service.update(999, { brand: 'Test' })).rejects.toThrow(
+      await expect(service.update(999, { marca: 'Test' })).rejects.toThrow(
         NotFoundException,
       );
     });

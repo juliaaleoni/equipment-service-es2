@@ -4,6 +4,7 @@ import { LockService } from './lock.service';
 import { TotemService } from '../totem/totem.service';
 import { LockStatus } from './lock.entity';
 import { BadRequestException } from '@nestjs/common';
+import { ExternalClient } from '../clients/external.client';
 
 describe('LockNetworkService', () => {
   let service: LockNetworkService;
@@ -18,6 +19,10 @@ describe('LockNetworkService', () => {
     findOne: jest.fn(),
   };
 
+  const mockExternalClient = {
+    sendEmail: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,6 +34,10 @@ describe('LockNetworkService', () => {
         {
           provide: TotemService,
           useValue: mockTotemService,
+        },
+        {
+          provide: ExternalClient,
+          useValue: mockExternalClient,
         },
       ],
     }).compile();
