@@ -20,12 +20,13 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async restoreDatabase(): Promise<{ message: string }> {
+  async restaurarDados(): Promise<{ message: string }> {
     // Clear all data from tables in correct order (respecting foreign keys)
-    await this.bicycleRepo.delete({});
-    await this.lockRepo.delete({});
-    await this.totemRepo.delete({});
+    await this.bicycleRepo.clear();
+    await this.lockRepo.clear();
+    await this.totemRepo.clear();
 
-    return { message: 'Banco restaurado com sucesso' };
+    return { message: 'Dados restaurados com sucesso' };
   }
+
 }
