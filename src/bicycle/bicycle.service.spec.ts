@@ -37,7 +37,7 @@ describe('BicycleService', () => {
     it('should create bicycle with status NEW and generated number', async () => {
       const dto = { marca: 'Caloi', modelo: 'Elite', ano: '2023' };
 
-      mockRepo.findOne.mockResolvedValue(null);
+      mockRepo.find.mockResolvedValue([]);
       mockRepo.create.mockReturnValue({
         ...dto,
         numero: 1,

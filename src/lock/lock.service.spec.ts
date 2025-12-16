@@ -50,7 +50,7 @@ describe('LockService', () => {
         model: 'Model X',
       };
 
-      mockRepo.findOne.mockResolvedValue(null);
+      mockRepo.find.mockResolvedValue([]);
       mockRepo.create.mockReturnValue({
         ...dto,
         number: 1,
