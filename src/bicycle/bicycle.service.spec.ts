@@ -13,6 +13,7 @@ describe('BicycleService', () => {
     find: jest.fn(),
     findOne: jest.fn(),
     findOneBy: jest.fn(),
+    findBy: jest.fn(),
     remove: jest.fn(),
   };
 
@@ -160,6 +161,44 @@ describe('BicycleService', () => {
       const result = await service.updateStatus(1, BicycleStatus.AVAILABLE);
 
       expect(result.status).toBe(BicycleStatus.AVAILABLE);
+    });
+  });
+
+  describe('findByIds', () => {
+    it('should return empty array when ids array is empty', async () => {
+      const result = await service.findByIds([]);
+
+      expect(result).toEqual([]);
+      expect(mockRepo.findBy).not.toHaveBeenCalled();
+    });
+
+    it('should return bicycles matching the provided ids', async () => {
+      const bicycles = [
+        {
+          id: 1,
+          marca: 'Caloi',
+          modelo: 'Elite',
+          ano: '2023',
+          numero: 1,
+          status: BicycleStatus.AVAILABLE,
+        },
+        {
+          id: 2,
+          marca: 'Specialized',
+          modelo: 'Rockhopper',
+          ano: '2024',
+          numero: 2,
+          status: BicycleStatus.AVAILABLE,
+        },
+      ];
+      mockRepo.findBy.mockResolvedValue(bicycles);
+
+      const result = await service.findByIds([1, 2]);
+
+      expect(result).toEqual(bicycles);
+      expect(mockRepo.findBy).toHaveBeenCalledWith({
+        id: expect.any(Object) as number[],
+      });
     });
   });
 });

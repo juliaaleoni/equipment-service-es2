@@ -244,6 +244,45 @@ describe('LockService', () => {
       await expect(service.getBicycle(1)).rejects.toThrow(NotFoundException);
     });
   });
+  describe('findByTotemId', () => {
+    it('should return locks with specific totem id', async () => {
+      const locks = [
+        {
+          id: 1,
+          number: 1,
+          location: '-22.9068,-43.1729',
+          manufactureYear: '2023',
+          model: 'Model X',
+          status: LockStatus.FREE,
+          totemId: 10,
+        },
+        {
+          id: 2,
+          number: 2,
+          location: '-22.9068,-43.1729',
+          manufactureYear: '2023',
+          model: 'Model Y',
+          status: LockStatus.FREE,
+          totemId: 10,
+        },
+      ];
+      mockRepo.find.mockResolvedValue(locks);
+
+      const result = await service.findByTotemId(10);
+
+      expect(mockRepo.find).toHaveBeenCalledWith({ where: { totemId: 10 } });
+      expect(result).toEqual(locks);
+    });
+
+    it('should return empty array if no locks found', async () => {
+      mockRepo.find.mockResolvedValue([]);
+
+      const result = await service.findByTotemId(999);
+
+      expect(result).toEqual([]);
+    });
+  });
+
   describe('updateTotemAssociation', () => {
     it('should associate lock with totem', async () => {
       const lock = {

@@ -1,5 +1,5 @@
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Totem } from './totem.entity';
 import { CreateTotemDto } from './dto/create-totem.dto';
@@ -111,17 +111,36 @@ describe('TotemService', () => {
     it('should remove a totem', async () => {
       const existingTotem = { ...mockTotem };
       mockRepo.findOneBy.mockResolvedValue(existingTotem);
+      mockLockService.findByTotemId.mockResolvedValue([]);
       mockRepo.remove.mockResolvedValue(undefined);
 
       await service.remove(1);
 
       expect(mockRepo.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      expect(mockLockService.findByTotemId).toHaveBeenCalledWith(1);
       expect(mockRepo.remove).toHaveBeenCalledWith(existingTotem);
     });
 
     it('should throw NotFoundException on remove if totem not found', async () => {
       mockRepo.findOneBy.mockResolvedValue(null);
       await expect(service.remove(99)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw BadRequestException if totem has associated locks', async () => {
+      const existingTotem = { ...mockTotem };
+      const locks = [
+        { id: 1, totemId: 1 },
+        { id: 2, totemId: 1 },
+      ];
+      mockRepo.findOneBy.mockResolvedValue(existingTotem);
+      mockLockService.findByTotemId.mockResolvedValue(locks);
+
+      await expect(service.remove(1)).rejects.toThrow(BadRequestException);
+      await expect(service.remove(1)).rejects.toThrow(
+        'Cannot delete totem with associated locks. Remove all locks first.',
+      );
+      expect(mockLockService.findByTotemId).toHaveBeenCalledWith(1);
+      expect(mockRepo.remove).not.toHaveBeenCalled();
     });
   });
 });

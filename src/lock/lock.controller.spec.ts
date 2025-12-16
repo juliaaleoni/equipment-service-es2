@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { LockController } from './lock.controller';
 import { LockService } from './lock.service';
 import { LockNetworkService } from './lock-network.service';
@@ -15,6 +16,7 @@ describe('LockController', () => {
     remove: jest.fn(),
     lockBicycle: jest.fn(),
     unlockBicycle: jest.fn(),
+    getBicycle: jest.fn(),
   };
 
   const mockNetworkService = {
@@ -168,5 +170,55 @@ describe('LockController', () => {
       100,
       'EM_REPARO',
     );
+  });
+
+  it('should get bicycle from lock', async () => {
+    const expected = { id: 5, marca: 'Caloi', modelo: 'Elite' };
+    mockService.getBicycle.mockResolvedValue(expected);
+
+    const result = await controller.getBicycle('1');
+
+    expect(mockService.getBicycle).toHaveBeenCalledWith(1);
+    expect(result).toEqual(expected);
+  });
+
+  describe('updateStatus', () => {
+    it('should update status with TRANCAR action', async () => {
+      const expected = { id: 1, status: LockStatus.OCCUPIED };
+      mockService.lockBicycle.mockResolvedValue(expected);
+
+      const result = (await controller.updateStatus(
+        '1',
+        'TRANCAR',
+      )) as typeof expected;
+
+      expect(mockService.lockBicycle).toHaveBeenCalledWith(1, undefined);
+      expect(result).toEqual(expected);
+    });
+
+    it('should update status with DESTRANCAR action', async () => {
+      const expected = { id: 1, status: LockStatus.FREE };
+      mockService.unlockBicycle.mockResolvedValue(expected);
+
+      const result = (await controller.updateStatus(
+        '1',
+        'DESTRANCAR',
+      )) as typeof expected;
+
+      expect(mockService.unlockBicycle).toHaveBeenCalledWith(1);
+      expect(result).toEqual(expected);
+    });
+
+    it('should throw BadRequestException for invalid action', async () => {
+      try {
+        await controller.updateStatus('1', 'INVALID');
+        fail('Expected BadRequestException to be thrown');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect((error as BadRequestException).message).toContain(
+          'Invalid action: INVALID',
+        );
+      }
+    });
   });
 });
