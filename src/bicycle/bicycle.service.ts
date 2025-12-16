@@ -59,10 +59,13 @@ export class BicycleService {
   }
 
   private async generateNumber(): Promise<number> {
-    const lastBicycle = await this.repo.findOne({
+    const lastBicycle = await this.repo.find({
       order: { numero: 'DESC' },
+      take: 1,
     });
-    return lastBicycle ? lastBicycle.numero + 1 : 1;
+    const lastBicycleNumber = lastBicycle[0].numero;
+    
+    return lastBicycleNumber ? lastBicycleNumber + 1 : 1;
   }
 
   async findByIds(ids: number[]): Promise<Bicycle[]> {
