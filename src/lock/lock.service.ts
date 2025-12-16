@@ -97,12 +97,10 @@ export class LockService {
       take: 1,
     });
 
-    const lastLock = (lastLocks && lastLocks.length > 0) ? lastLocks[0] : null;
-    
+    const lastLock = lastLocks && lastLocks.length > 0 ? lastLocks[0] : null;
+
     return lastLock ? lastLock.number + 1 : 1;
   }
-
-
 
   async findByTotemId(totemId: number): Promise<Lock[]> {
     return this.repo.find({ where: { totemId } });

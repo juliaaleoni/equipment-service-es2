@@ -63,11 +63,11 @@ export class BicycleService {
       order: { numero: 'DESC' },
       take: 1,
     });
-    const lastBicycle = (lastBicycles && lastBicycles.length > 0) ? lastBicycles[0] : null;
+    const lastBicycle =
+      lastBicycles && lastBicycles.length > 0 ? lastBicycles[0] : null;
 
     return lastBicycle ? lastBicycle.numero + 1 : 1;
   }
-
 
   async findByIds(ids: number[]): Promise<Bicycle[]> {
     if (ids.length === 0) return [];

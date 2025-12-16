@@ -21,24 +21,27 @@ export class AppService {
   }
 
   async restaurarDados(): Promise<{ message: string }> {
+    // Clear all data from tables in correct order (respecting foreign keys)
     await this.lockRepo.delete({});
     await this.bicycleRepo.delete({});
     await this.totemRepo.delete({});
 
-    await this.totemRepo.query(
-      ALTER SEQUENCE totems_id_seq RESTART WITH 1,
-    );
+    // Reset sequences to start from 1
+    await this.totemRepo.query(`ALTER SEQUENCE totems_id_seq RESTART WITH 1`);
     await this.bicycleRepo.query(
-      ALTER SEQUENCE bicycles_id_seq RESTART WITH 1,
+      `ALTER SEQUENCE bicycles_id_seq RESTART WITH 1`,
     );
-    await this.lockRepo.query(ALTER SEQUENCE locks_id_seq RESTART WITH 1);
+    await this.lockRepo.query(`ALTER SEQUENCE locks_id_seq RESTART WITH 1`);
 
+    // Insert initial test data
 
+    // 1. Create Totem
     const totem = await this.totemRepo.save({
       location: 'Rio de Janeiro',
       description: 'Totem Principal',
     });
 
+    // 2. Create Bicycles
     const bicycle1 = await this.bicycleRepo.save({
       marca: 'Caloi',
       modelo: 'Caloi',
@@ -55,7 +58,7 @@ export class AppService {
       status: BicycleStatus.REPAIR_REQUESTED,
     });
 
-    const bicycle3 = await this.bicycleRepo.save({
+    const _bicycle3 = await this.bicycleRepo.save({
       marca: 'Caloi',
       modelo: 'Caloi',
       ano: '2020',
@@ -63,7 +66,7 @@ export class AppService {
       status: BicycleStatus.IN_USE,
     });
 
-    const bicycle4 = await this.bicycleRepo.save({
+    const _bicycle4 = await this.bicycleRepo.save({
       marca: 'Caloi',
       modelo: 'Caloi',
       ano: '2020',
@@ -79,6 +82,7 @@ export class AppService {
       status: BicycleStatus.AVAILABLE,
     });
 
+    // 3. Create Locks
     await this.lockRepo.save({
       number: 1001,
       location: 'Rio de Janeiro',
