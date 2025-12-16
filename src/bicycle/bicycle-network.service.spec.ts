@@ -121,6 +121,31 @@ describe('BicycleNetworkService', () => {
         BadRequestException,
       );
     });
+
+    it('should send email notification after integrating bicycle', async () => {
+      const bicycle = { id: 1, status: BicycleStatus.NEW };
+      const lock = { id: 10, status: LockStatus.FREE, bicycleId: null };
+
+      mockBicycleService.findOne.mockResolvedValue(bicycle);
+      mockLockService.findOne.mockResolvedValue(lock);
+      mockBicycleService.updateStatus.mockResolvedValue({
+        ...bicycle,
+        status: BicycleStatus.AVAILABLE,
+      });
+      mockLockService.lockBicycle.mockResolvedValue({
+        ...lock,
+        status: LockStatus.OCCUPIED,
+        bicycleId: 1,
+      });
+
+      await service.integrateBicycle(1, 10, 100);
+
+      expect(mockExternalClient.sendEmail).toHaveBeenCalledWith(
+        'reparador@example.com',
+        'Bicicleta Incluída na Rede',
+        'A bicicleta 1 foi incluída na tranca 10 pelo funcionário 100',
+      );
+    });
   });
 
   describe('removeBicycle (UC09)', () => {
@@ -192,6 +217,67 @@ describe('BicycleNetworkService', () => {
       await expect(
         service.removeBicycle(1, 10, 100, 'EM_REPARO'),
       ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw BadRequestException if action is invalid', async () => {
+      const bicycle = { id: 1, status: BicycleStatus.REPAIR_REQUESTED };
+      const lock = { id: 10, status: LockStatus.OCCUPIED, bicycleId: 1 };
+
+      mockBicycleService.findOne.mockResolvedValue(bicycle);
+      mockLockService.findOne.mockResolvedValue(lock);
+
+      await expect(
+        service.removeBicycle(1, 10, 100, 'INVALID_ACTION'),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should handle case-insensitive action', async () => {
+      const bicycle = { id: 1, status: BicycleStatus.REPAIR_REQUESTED };
+      const lock = { id: 10, status: LockStatus.OCCUPIED, bicycleId: 1 };
+
+      mockBicycleService.findOne.mockResolvedValue(bicycle);
+      mockLockService.findOne.mockResolvedValue(lock);
+      mockBicycleService.updateStatus.mockResolvedValue({
+        ...bicycle,
+        status: BicycleStatus.IN_REPAIR,
+      });
+      mockLockService.unlockBicycle.mockResolvedValue({
+        ...lock,
+        status: LockStatus.FREE,
+        bicycleId: null,
+      });
+
+      await service.removeBicycle(1, 10, 100, 'em_reparo');
+
+      expect(mockBicycleService.updateStatus).toHaveBeenCalledWith(
+        1,
+        BicycleStatus.IN_REPAIR,
+      );
+    });
+
+    it('should send email notification after removing bicycle', async () => {
+      const bicycle = { id: 1, status: BicycleStatus.REPAIR_REQUESTED };
+      const lock = { id: 10, status: LockStatus.OCCUPIED, bicycleId: 1 };
+
+      mockBicycleService.findOne.mockResolvedValue(bicycle);
+      mockLockService.findOne.mockResolvedValue(lock);
+      mockBicycleService.updateStatus.mockResolvedValue({
+        ...bicycle,
+        status: BicycleStatus.IN_REPAIR,
+      });
+      mockLockService.unlockBicycle.mockResolvedValue({
+        ...lock,
+        status: LockStatus.FREE,
+        bicycleId: null,
+      });
+
+      await service.removeBicycle(1, 10, 100, 'EM_REPARO');
+
+      expect(mockExternalClient.sendEmail).toHaveBeenCalledWith(
+        'reparador@example.com',
+        'Bicicleta Removida da Rede',
+        'A bicicleta 1 foi removida da tranca 10 com ação EM_REPARO pelo funcionário 100',
+      );
     });
   });
 });
