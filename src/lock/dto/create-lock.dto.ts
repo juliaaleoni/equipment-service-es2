@@ -1,6 +1,10 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateLockDto {
+  @IsNumber()
+  @IsNotEmpty()
+  number: number;
+
   @IsString()
   @IsNotEmpty()
   location: string;

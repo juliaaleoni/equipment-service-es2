@@ -17,10 +17,10 @@ export class BicycleService {
   ) {}
 
   async create(dto: CreateBicycleDto): Promise<Bicycle> {
-    const number = await this.generateNumber();
+    const numero = await this.generateNumber();
     const bicycle = this.repo.create({
       ...dto,
-      number,
+      numero,
       status: BicycleStatus.NEW,
     });
     return this.repo.save(bicycle);
@@ -60,9 +60,9 @@ export class BicycleService {
 
   private async generateNumber(): Promise<number> {
     const lastBicycle = await this.repo.findOne({
-      order: { number: 'DESC' },
+      order: { numero: 'DESC' },
     });
-    return lastBicycle ? lastBicycle.number + 1 : 1;
+    return lastBicycle ? lastBicycle.numero + 1 : 1;
   }
 
   async findByIds(ids: number[]): Promise<Bicycle[]> {

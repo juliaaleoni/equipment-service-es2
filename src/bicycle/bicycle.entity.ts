@@ -14,17 +14,17 @@ export class Bicycle {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  number: number;
+  @Column({ unique: true, name: 'numero' })
+  numero: number;
 
-  @Column()
-  brand: string;
+  @Column({ name: 'marca' })
+  marca: string;
 
-  @Column()
-  model: string;
+  @Column({ name: 'modelo' })
+  modelo: string;
 
-  @Column()
-  year: string;
+  @Column({ name: 'ano' })
+  ano: string;
 
   @Column({
     type: 'enum',

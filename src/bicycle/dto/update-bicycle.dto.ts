@@ -1,15 +1,19 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class UpdateBicycleDto {
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  brand?: string;
+  numero?: number;
 
   @IsString()
   @IsOptional()
-  model?: string;
+  marca?: string;
 
   @IsString()
   @IsOptional()
-  year?: string;
+  modelo?: string;
+
+  @IsString()
+  @IsOptional()
+  ano?: string;
 }

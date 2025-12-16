@@ -2,12 +2,14 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { LockService } from './lock.service';
 import { TotemService } from '../totem/totem.service';
 import { LockStatus } from './lock.entity';
+import { ExternalClient } from '../clients/external.client';
 
 @Injectable()
 export class LockNetworkService {
   constructor(
     private readonly lockService: LockService,
     private readonly totemService: TotemService,
+    private readonly externalClient: ExternalClient,
   ) {}
 
   async integrateLock(
@@ -30,11 +32,11 @@ export class LockNetworkService {
 
     await this.lockService.updateTotemAssociation(lockId, totemId);
 
-    // Mock: Email notification
-    console.log(`[EMAIL] To: admin@bikeshare.com`);
-    console.log(`[EMAIL] Subject: Tranca integrada na rede`);
-    console.log(
-      `[EMAIL] Message: Tranca ${lockId} foi integrada ao totem ${totemId} pelo funcionário ${_employeeId}`,
+    // Send email notification to employee
+    await this.externalClient.sendEmail(
+      'reparador@example.com',
+      'Tranca Integrada na Rede',
+      `A tranca ${lockId} foi integrada ao totem ${totemId} pelo funcionário ${_employeeId}`,
     );
   }
 
@@ -64,11 +66,11 @@ export class LockNetworkService {
 
     await this.lockService.updateTotemAssociation(lockId, null);
 
-    // Mock: Email notification
-    console.log(`[EMAIL] To: admin@bikeshare.com`);
-    console.log(`[EMAIL] Subject: Tranca removida da rede`);
-    console.log(
-      `[EMAIL] Message: Tranca ${lockId} foi removida com ação ${action} pelo funcionário ${_employeeId}`,
+    // Send email notification to employee
+    await this.externalClient.sendEmail(
+      'reparador@example.com',
+      'Tranca Removida da Rede',
+      `A tranca ${lockId} foi removida com ação ${action} pelo funcionário ${_employeeId}`,
     );
   }
 }

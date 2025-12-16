@@ -3,12 +3,14 @@ import { BicycleService } from './bicycle.service';
 import { LockService } from '../lock/lock.service';
 import { BicycleStatus } from './bicycle.entity';
 import { LockStatus } from '../lock/lock.entity';
+import { ExternalClient } from '../clients/external.client';
 
 @Injectable()
 export class BicycleNetworkService {
   constructor(
     private readonly bicycleService: BicycleService,
     private readonly lockService: LockService,
+    private readonly externalClient: ExternalClient,
   ) {}
 
   async integrateBicycle(
@@ -25,23 +27,23 @@ export class BicycleNetworkService {
       throw new BadRequestException(
         'Bicycle must have status NEW or IN_REPAIR',
       );
-    } 
+    }
 
     const lock = await this.lockService.findOne(lockId);
 
     if (lock.status !== LockStatus.FREE) {
       throw new BadRequestException('Lock must be FREE');
-    } 
+    }
 
     await this.bicycleService.updateStatus(bicycleId, BicycleStatus.AVAILABLE);
 
     await this.lockService.lockBicycle(lockId, bicycleId);
 
-    // Mock: Email notification
-    console.log(`[EMAIL] To: admin@bikeshare.com`);
-    console.log(`[EMAIL] Subject: Bicicleta integrada na rede`);
-    console.log(
-      `[EMAIL] Message: Bicicleta ${bicycleId} foi integrada à tranca ${lockId} pelo funcionário ${_employeeId}`,
+    // Send email notification to employee
+    await this.externalClient.sendEmail(
+      'reparador@example.com',
+      'Bicicleta Incluída na Rede',
+      `A bicicleta ${bicycleId} foi incluída na tranca ${lockId} pelo funcionário ${_employeeId}`,
     );
   }
 
@@ -63,7 +65,7 @@ export class BicycleNetworkService {
 
     if (lock.bicycleId !== bicycleId) {
       throw new BadRequestException('Lock does not have this bicycle');
-    } 
+    }
 
     const statusMap: Record<string, BicycleStatus> = {
       EM_REPARO: BicycleStatus.IN_REPAIR,
@@ -79,11 +81,11 @@ export class BicycleNetworkService {
 
     await this.lockService.unlockBicycle(lockId);
 
-    // Mock: Email notification
-    console.log(`[EMAIL] To: admin@bikeshare.com`);
-    console.log(`[EMAIL] Subject: Bicicleta removida da rede`);
-    console.log(
-      `[EMAIL] Message: Bicicleta ${bicycleId} foi removida da tranca ${lockId} com ação ${action} pelo funcionário ${_employeeId}`,
+    // Send email notification to employee
+    await this.externalClient.sendEmail(
+      'reparador@example.com',
+      'Bicicleta Removida da Rede',
+      `A bicicleta ${bicycleId} foi removida da tranca ${lockId} com ação ${action} pelo funcionário ${_employeeId}`,
     );
   }
 }
